@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import wave
+import os
 import numpy as np
 from pydub import AudioSegment
 
@@ -39,10 +40,19 @@ def convert_wav_to_raw_array(input_filename, output_filename):
 def main():
     parser = argparse.ArgumentParser(description='Convert and normalize WAV to C-style 16-bit mono 44.1kHz raw array.')
     parser.add_argument('input', help='Input WAV filename')
-    parser.add_argument('-o', '--output', default='out.h', help='Output header filename (default: out.h)')
+    parser.add_argument('-o', '--output', help='Output header filename (default: <input>.h)')
 
     args = parser.parse_args()
-    convert_wav_to_raw_array(args.input, args.output)
+
+    # Determine output filename if not explicitly provided
+    if args.output:
+        output_filename = args.output
+    else:
+        base_name = os.path.splitext(os.path.basename(args.input))[0]
+        output_filename = f"{base_name}.h"
+
+    convert_wav_to_raw_array(args.input, output_filename)
 
 if __name__ == '__main__':
     main()
+
